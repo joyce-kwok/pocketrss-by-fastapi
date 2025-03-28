@@ -15,7 +15,7 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
-batch_size = 8
+batch_size = 6
 existurls = []
 
 # Organized RSS feeds by source
@@ -104,7 +104,7 @@ def search_existing(source):
     print(response)
     articles = response.json()
     for article in articles['list'].values():
-        urlist.append(article['resolved_url'])
+        urlist.append(article['given_url'])
     return urlist
 
 def retrieve(state):
