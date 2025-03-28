@@ -16,7 +16,6 @@ CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 6
-existurls = []
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -167,6 +166,7 @@ async def housekeep():
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     """Save specific feed source"""
+    global existurls
     print(f"Data source: {source}")
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
