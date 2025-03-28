@@ -64,7 +64,7 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
-            print(f"Checking if {entry.link} is a new link... ")
+            # print(f"Checking if {entry.link} is a new link... ")
             if entry.link not in existurls:
                print(f"{entry.link} is a new link and will be pushed")
                batch.append({
