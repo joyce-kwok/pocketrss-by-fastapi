@@ -88,11 +88,11 @@ def recall(state, action, freq):
     print(length)
     if length > 0:
         modify(param)
-        recall(state, action, freq)
+        recall(state, action, freq)   
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "kept awake"}
 
 @app.get("/housekeep", response_class=PlainTextResponse)
 async def housekeep():
