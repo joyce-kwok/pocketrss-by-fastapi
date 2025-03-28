@@ -16,7 +16,7 @@ CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 8
-src = ''
+existurls = []
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -49,7 +49,6 @@ def save_new_items_to_pocket(feed_url):
         feed_url: URL of the RSS feed to process
         batch_size: Number of items to send in each batch (default: 6)
     """
-    existurl = search_existing()
     url = base_url + 'add'
     print(f"Checking {feed_url}...")
     
@@ -64,7 +63,7 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
-            if entry.link not in existurl:
+            if entry.link not in existurls:
                batch.append({
                 "action": "add",
                 "url": entry.link,
@@ -167,7 +166,7 @@ async def save_source(source: str):
     """Save specific feed source"""
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
-    src=source
+    existurls = search_existing(source)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
     return f"Saved {source} feeds to pocket"
