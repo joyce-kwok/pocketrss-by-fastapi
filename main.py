@@ -15,7 +15,7 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
-batch_size=8
+batch_size = 7
 
 # List of RSS feeds to monitor
 RSS_FEEDS = [
