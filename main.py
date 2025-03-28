@@ -51,6 +51,7 @@ def save_new_items_to_pocket(feed_url):
     """
     url = base_url + 'add'
     print(f"Checking {feed_url}...")
+    print (f"Existing URLs {existurls}...")
     
     try:
         feed = feedparser.parse(feed_url)
