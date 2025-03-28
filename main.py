@@ -63,6 +63,7 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
+            print(entry.link)
             if entry.link not in existurls:
                batch.append({
                 "action": "add",
