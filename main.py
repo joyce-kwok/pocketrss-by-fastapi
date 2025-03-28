@@ -51,7 +51,7 @@ def save_new_items_to_pocket(feed_url):
     """
     url = base_url + 'add'
     print(f"Checking {feed_url}...")
-    print (f"Existing URLs {existurls}...")
+    # print (f"Existing URLs {existurls}...")
     
     try:
         feed = feedparser.parse(feed_url)
@@ -64,8 +64,9 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
-            print(entry.link)
+            print(f"Checking if {entry.link} is a new link... ")
             if entry.link not in existurls:
+               print(f"{entry.link} is a new link and will be inserted ")
                batch.append({
                 "action": "add",
                 "url": entry.link,
