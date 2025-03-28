@@ -90,7 +90,7 @@ def recall(state, action, freq):
         modify(param)
         recall(state, action, freq)   
 
-@app.get("/health-check")
+@app.get("/")
 async def root():
     return {"message": "kept awake"}
 
