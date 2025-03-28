@@ -15,6 +15,7 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
+batch_size=6
 
 # List of RSS feeds to monitor
 RSS_FEEDS = [
@@ -28,21 +29,51 @@ RSS_FEEDS = [
 ]
 
 def save_new_items_to_pocket(feed_url):
+    """Save new items from an RSS feed to Pocket in batches.
+    
+    Args:
+        feed_url: URL of the RSS feed to process
+        batch_size: Number of items to send in each batch (default: 6)
+    """
     url = base_url + 'add'
-    feed = feedparser.parse(feed_url)
-    temp = []
     print(f"Checking {feed_url}...")
-    # Process items (oldest first to avoid missing updates)
-    for entry in reversed(feed.entries):
-        obj = {
-                'action': 'add',
-                'url': entry.link,
-                'title':entry.title,
-        }
-        temp.append(obj)
-    json_temp = json.dumps(temp)
-    encoded = urllib.parse.quote(json_temp)
-    modify(encoded)
+    
+    try:
+        feed = feedparser.parse(feed_url)
+        if not feed.entries:
+            print("No entries found in feed.")
+            return
+            
+        # Process items in reverse order (oldest first)
+        entries = reversed(feed.entries)
+        batch = []
+        
+        for entry in entries:
+            batch.append({
+                "action": "add",
+                "url": entry.link,
+                "title": entry.title,
+            })
+            
+            if len(batch) >= batch_size:
+                _send_batch_to_pocket(batch)
+                batch = []
+                
+        # Send any remaining items in the final partial batch
+        if batch:
+            _send_batch_to_pocket(batch)
+            
+    except Exception as e:
+        print(f"Error processing feed {feed_url}: {str(e)}")
+
+def _send_batch_to_pocket(batch):
+    """Helper function to send a batch of items to Pocket."""
+    try:
+        json_batch = json.dumps(batch)
+        encoded = urllib.parse.quote(json_batch)
+        modify(encoded)
+    except Exception as e:
+        print(f"Error sending batch to Pocket: {str(e)}")
 
 def retrieve(state):
     url = base_url + 'get'
