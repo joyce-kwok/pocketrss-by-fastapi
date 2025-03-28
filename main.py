@@ -167,6 +167,7 @@ async def housekeep():
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     """Save specific feed source"""
+    print(f"Data source: {source}")
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
     existurls = search_existing(source)
