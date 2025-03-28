@@ -15,18 +15,31 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
-batch_size = 7
+batch_size = 6
 
-# List of RSS feeds to monitor
-RSS_FEEDS = [
-    'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
-    'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml',
-    'https://www.scmp.com/rss/36/feed',
-    'https://www.scmp.com/rss/91/feed',
-    'https://news.mingpao.com/rss/ins/s00005.xml',
-    'https://news.mingpao.com/rss/ins/s00024.xml'
-    # Add more feeds here
-]
+# Organized RSS feeds by source
+RSS_FEEDS = {
+    'rthk': [
+        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
+        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml'
+    ],
+    'scmp': [
+        'https://www.scmp.com/rss/36/feed',
+        'https://www.scmp.com/rss/91/feed'
+    ],
+    'mingpao': [
+        'https://news.mingpao.com/rss/ins/s00005.xml',
+        'https://news.mingpao.com/rss/ins/s00024.xml'
+    ],
+    'all': [
+        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
+        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml',
+        'https://www.scmp.com/rss/36/feed',
+        'https://www.scmp.com/rss/91/feed',
+        'https://news.mingpao.com/rss/ins/s00005.xml',
+        'https://news.mingpao.com/rss/ins/s00024.xml'
+    ]
+}
 
 def save_new_items_to_pocket(feed_url):
     """Save new items from an RSS feed to Pocket in batches.
@@ -131,7 +144,18 @@ async def housekeep():
     return "housekeeping is done"
 
 @app.get("/save", response_class=PlainTextResponse)
-async def save():
+async def save_all():
+    """Save all feeds"""
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(executor.map(save_new_items_to_pocket, RSS_FEEDS))
-    return "Saved to pocket"
+        list(executor.map(save_new_items_to_pocket, RSS_FEEDS['all']))
+    return "Saved all feeds to pocket"
+
+@app.get("/save/{source}", response_class=PlainTextResponse)
+async def save_source(source: str):
+    """Save specific feed source"""
+    if source not in RSS_FEEDS:
+        return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
+    return f"Saved {source} feeds to pocket"
