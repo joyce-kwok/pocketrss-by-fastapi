@@ -86,9 +86,9 @@ def retrieve(state):
     response = requests.post(url, json=params)
     return response.json()
 
-def get_encoded_param(articles, action, days_to_subtract):
+def get_encoded_param(articles, action, delta):
     temp = []
-    exprange = datetime.now() - timedelta(days=days_to_subtract)
+    exprange = datetime.now() - delta
     for article in articles['list'].values():
         artime = datetime.fromtimestamp(int(article['time_added']))
         if article['favorite'] == '0' and artime < exprange:
@@ -126,8 +126,8 @@ async def root():
 
 @app.get("/housekeep", response_class=PlainTextResponse)
 async def housekeep():
-    recall('unread', 'archive', 1)
-    recall('archive', 'delete', 15)
+    recall('unread', 'archive', timedelta(hours=12))
+    recall('archive', 'delete', timedelta(days=15))
     return "housekeeping is done"
 
 @app.get("/save", response_class=PlainTextResponse)
