@@ -70,9 +70,8 @@ def save_new_items_to_pocket(feed_url):
             if entry.link not in existurls:
                published_datetime = parsedate_to_datetime(entry.published)
                unix_timestamp = int(published_datetime.timestamp())
-               print("原始時間:", entry.published)
-               print("Unix Timestamp (整數):", unix_timestamp)
                print(f"{entry.link} is a new link and will be pushed")
+               print(f"Original Published Time: {entry.published}, Unix Timestamp (in integer): {unix_timestamp}")
                batch.append({
                 "action": "add",
                 "url": entry.link,
