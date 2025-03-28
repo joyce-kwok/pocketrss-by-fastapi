@@ -15,7 +15,8 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
-batch_size = 6
+batch_size = 8
+src = ''
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -48,6 +49,7 @@ def save_new_items_to_pocket(feed_url):
         feed_url: URL of the RSS feed to process
         batch_size: Number of items to send in each batch (default: 6)
     """
+    existurl = search_existing()
     url = base_url + 'add'
     print(f"Checking {feed_url}...")
     
@@ -62,11 +64,12 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
-            batch.append({
+            if entry.link not in existurl:
+               batch.append({
                 "action": "add",
                 "url": entry.link,
                 "title": entry.title,
-            })
+               })
             
             if len(batch) >= batch_size:
                 _send_batch_to_pocket(batch)
@@ -88,6 +91,21 @@ def _send_batch_to_pocket(batch):
     except Exception as e:
         print(f"Error sending batch to Pocket: {str(e)}")
 
+def search_existing(source):
+    urlist = []
+    url = base_url + 'get'
+    params = {
+        'consumer_key': CONSUMER_KEY,
+        'access_token': ACCESS_TOKEN,
+        'sort': 'newest',
+        'search': source
+    }
+    response = requests.post(url, json=params)
+    print(response)
+    for article in response['list'].values():
+        urlist.append(article['resolved_url'])
+    return urlist
+
 def retrieve(state):
     url = base_url + 'get'
     params = {
@@ -97,6 +115,7 @@ def retrieve(state):
         'state': state
     }
     response = requests.post(url, json=params)
+    print(response)
     return response.json()
 
 def get_encoded_param(articles, action, delta):
@@ -143,19 +162,12 @@ async def housekeep():
     recall('archive', 'delete', timedelta(days=15))
     return "housekeeping is done"
 
-@app.get("/save", response_class=PlainTextResponse)
-async def save_all():
-    """Save all feeds"""
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(executor.map(save_new_items_to_pocket, RSS_FEEDS['all']))
-    return "Saved all feeds to pocket"
-
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     """Save specific feed source"""
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
-    
+    src=source
     with concurrent.futures.ThreadPoolExecutor() as executor:
         list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
     return f"Saved {source} feeds to pocket"
