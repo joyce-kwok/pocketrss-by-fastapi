@@ -101,7 +101,8 @@ def search_existing(source):
     }
     response = requests.post(url, json=params)
     print(response)
-    for article in response['list'].values():
+    articles = response.json()
+    for article in articles['list'].values():
         urlist.append(article['resolved_url'])
     return urlist
 
