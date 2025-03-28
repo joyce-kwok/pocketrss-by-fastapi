@@ -30,20 +30,19 @@ RSS_FEEDS = [
 def save_new_items_to_pocket(feed_url):
     url = base_url + 'add'
     feed = feedparser.parse(feed_url)
+    temp = []
     print(f"Checking {feed_url}...")
     # Process items (oldest first to avoid missing updates)
     for entry in reversed(feed.entries):
-        params = {
-            'url': entry.link,
-            'title': entry.title,
-            'consumer_key': CONSUMER_KEY,
-            'access_token': ACCESS_TOKEN,
+        obj = {
+                'action': 'add',
+                'url': entry.link,
+                'title':entry.title,
         }
-        response = requests.post(url, json=params)
-        print(f"URL: {entry.link}")
-        print(f"Saved: {entry.title}")
-        print(f"API Response: {response.text}")
-        time.sleep(1)  # Avoid rate limits
+        temp.append(obj)
+    json_temp = json.dumps(temp)
+    encoded = urllib.parse.quote(json_temp)
+    modify(encoded)
 
 def retrieve(state):
     url = base_url + 'get'
