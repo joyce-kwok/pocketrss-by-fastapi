@@ -66,7 +66,7 @@ def save_new_items_to_pocket(feed_url):
         for entry in entries:
             print(f"Checking if {entry.link} is a new link... ")
             if entry.link not in existurls:
-               print(f"{entry.link} is a new link and will be inserted ")
+               print(f"{entry.link} is a new link and will be pushed")
                batch.append({
                 "action": "add",
                 "url": entry.link,
@@ -103,7 +103,7 @@ def search_existing(source):
         'search': source
     }
     response = requests.post(url, json=params)
-    print(response)
+    print(f"Calling retrieve API to search saved posts, response is {response}")
     articles = response.json()
     for article in articles['list'].values():
         urlist.append(article['given_url'])
@@ -118,7 +118,7 @@ def retrieve(state):
         'state': state
     }
     response = requests.post(url, json=params)
-    print(response)
+    print(f"Calling retrieve API for {state} action, response is {response}")
     return response.json()
 
 def get_encoded_param(articles, action, delta):
@@ -144,7 +144,7 @@ def modify(encodedparam):
         'actions': encodedparam,
     }
     response = requests.post(url, params=payload)
-    print(response)
+    print(f"Calling modify API to update items, response is {response}")
 
 def recall(state, action, freq):
     articles = retrieve(state)
