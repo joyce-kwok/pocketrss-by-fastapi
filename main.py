@@ -7,6 +7,7 @@ import requests
 import json
 import urllib.parse
 from datetime import datetime, timedelta
+from email.utils import parsedate_to_datetime
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 from fastapi import FastAPI
@@ -64,13 +65,19 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
+
             # print(f"Checking if {entry.link} is a new link... ")
             if entry.link not in existurls:
+               published_datetime = parsedate_to_datetime(entry.published)
+               unix_timestamp = int(published_datetime.timestamp())
+               print("原始時間:", entry.published)
+               print("Unix Timestamp (整數):", unix_timestamp)
                print(f"{entry.link} is a new link and will be pushed")
                batch.append({
                 "action": "add",
                 "url": entry.link,
                 "title": entry.title,
+                "time": unix_timestamp
                })
             
             if len(batch) >= batch_size:
