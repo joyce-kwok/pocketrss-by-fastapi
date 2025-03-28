@@ -15,7 +15,7 @@ app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
-batch_size=6
+batch_size=8
 
 # List of RSS feeds to monitor
 RSS_FEEDS = [
@@ -109,7 +109,7 @@ def modify(encodedparam):
         'actions': encodedparam,
     }
     response = requests.post(url, params=payload)
-    print(response.text)
+    print(response)
 
 def recall(state, action, freq):
     articles = retrieve(state)
