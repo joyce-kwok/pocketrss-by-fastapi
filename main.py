@@ -189,4 +189,4 @@ async def save_source(source: str):
           list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
         return f"Saved {source} feeds to pocket"
     else:
-        return f"Cannot retrieve {source} feeds at the moment. Will not update news in this run."
+        return f"Cannot retrieve saved {source} feeds at the moment. Will not update news in this run."
