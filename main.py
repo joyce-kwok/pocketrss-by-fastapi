@@ -18,6 +18,7 @@ ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 7
 existurls = [] 
+last_update = ''
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -67,9 +68,8 @@ def save_new_items_to_pocket(feed_url):
         for entry in entries:
             published_datetime = parsedate_to_datetime(entry.published)
             unix_timestamp = int(published_datetime.timestamp())
-            time_interval = datetime.now() - timedelta(hours=1)
             # print(f"Checking if {entry.link} is a new link... ")
-            if entry.link not in existurls and published_datetime > time_interval:
+            if entry.link not in existurls and published_datetime > last_update:
                print(f"{entry.link} is a new link and will be pushed")
                print(f"Original Published Time: {entry.published}, Unix Timestamp (in integer): {unix_timestamp}")
                batch.append({
@@ -101,6 +101,7 @@ def _send_batch_to_pocket(batch):
 
 def search_existing(source):
     urlist = []
+    lastest = ''
     url = base_url + 'get'
     params = {
         'consumer_key': CONSUMER_KEY,
@@ -112,11 +113,14 @@ def search_existing(source):
     print(f"Calling retrieve API to search saved posts, response code is {response.status_code}")
     if response.status_code == 200:
        articles = response.json()
+       last_item_key = next(reversed(data["list"]))  # Returns "4192836625"
+       last_item = data["list"][last_item_key] # Returns the full last item dict
+       latest = last_item['time_added']
        for article in articles['list'].values():
            urlist.append(article['given_url'])
     else:
         urlist.append('error')
-    return urlist
+    return urlist, latest
 
 def retrieve(state):
     url = base_url + 'get'
@@ -180,11 +184,10 @@ async def housekeep(action: str):
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     """Save specific feed source"""
-    global existurls
     print(f"Data source: {source}")
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
-    existurls = search_existing(source)
+    global existurls, last_update = search_existing(source)
     if existurls[0] != 'error':
         with concurrent.futures.ThreadPoolExecutor() as executor:
           list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
