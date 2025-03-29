@@ -110,13 +110,12 @@ def search_existing(source):
     }
     response = requests.post(url, json=params)
     print(f"Calling retrieve API to search saved posts, response code is {response.status_code}")
-    if reposne.status_code == 200:
+    if response.status_code == 200:
        articles = response.json()
        for article in articles['list'].values():
            urlist.append(article['given_url'])
-    elif response.status.code == 403:
-        time.sleep(0.2)
-        search_existing(source)
+    else
+        urlist.append('error')
     return urlist
 
 def retrieve(state):
@@ -185,6 +184,9 @@ async def save_source(source: str):
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
     existurls = search_existing(source)
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
-    return f"Saved {source} feeds to pocket"
+    if existurls[0] != 'error':
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+          list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
+        return f"Saved {source} feeds to pocket"
+    else:
+        return f"Cannot retrieve {source} feeds at the moment. Will not update news in this run."
