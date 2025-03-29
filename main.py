@@ -17,7 +17,8 @@ CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 7
-existurls, last_update
+existurls: list[str] = []
+last_update: datetime = datetime.min
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -100,7 +101,7 @@ def _send_batch_to_pocket(batch):
 
 def search_existing(source):
     urlist = []
-    latest = ''
+    latest = datetime.min
     url = base_url + 'get'
     params = {
         'consumer_key': CONSUMER_KEY,
