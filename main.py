@@ -6,7 +6,7 @@ import time
 import requests
 import json
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
@@ -17,8 +17,8 @@ CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 7
-existurls: list[str] = []
-last_update: datetime = datetime.min
+existurls = []
+last_update: datetime = datetime.min.replace(tzinfo=timezone.utc)
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
@@ -101,7 +101,7 @@ def _send_batch_to_pocket(batch):
 
 def search_existing(source):
     urlist = []
-    latest = datetime.min
+    latest = datetime.min.replace(tzinfo=timezone.utc)
     url = base_url + 'get'
     params = {
         'consumer_key': CONSUMER_KEY,
@@ -115,7 +115,7 @@ def search_existing(source):
        articles = response.json()
        last_item_key = next(reversed(articles['list']))  # Returns "4192836625"
        last_item = articles["list"][last_item_key] # Returns the full last item dict
-       latest = datetime.fromtimestamp(int(last_item['time_added']))
+       latest = datetime.fromtimestamp(int(last_item['time_added']), tz=timezone.utc)
        print(f"Last updated: {latest}")
        for article in articles['list'].values():
            urlist.append(article['given_url'])
