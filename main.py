@@ -114,7 +114,7 @@ def search_existing(source):
        articles = response.json()
        for article in articles['list'].values():
            urlist.append(article['given_url'])
-    else
+    else:
         urlist.append('error')
     return urlist
 
