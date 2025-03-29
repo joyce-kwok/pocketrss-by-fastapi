@@ -110,9 +110,12 @@ def search_existing(source):
     }
     response = requests.post(url, json=params)
     print(f"Calling retrieve API to search saved posts, response code is {response.status_code}")
-    articles = response.json()
-    for article in articles['list'].values():
-        urlist.append(article['given_url'])
+    if reposne.status_code == 200:
+       articles = response.json()
+       for article in articles['list'].values():
+           urlist.append(article['given_url'])
+    elif response.status.code == 403:
+        search_existing(source)
     return urlist
 
 def retrieve(state):
