@@ -165,10 +165,12 @@ def recall(state, action, freq):
 async def root():
     return {"message": "kept awake"}
 
-@app.get("/housekeep", response_class=PlainTextResponse)
-async def housekeep():
-    recall('unread', 'archive', timedelta(hours=12))
-    recall('archive', 'delete', timedelta(days=15))
+@app.get("/housekeep/{action}", response_class=PlainTextResponse)
+async def housekeep(action: str):
+    if action == 'archive': 
+       recall('unread', 'archive', timedelta(hours=12))
+    if action == 'delete':
+       recall('archive', 'delete', timedelta(days=15))
     return "housekeeping is done"
 
 @app.get("/save/{source}", response_class=PlainTextResponse)
