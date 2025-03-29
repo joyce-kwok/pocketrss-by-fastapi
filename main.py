@@ -100,7 +100,7 @@ def _send_batch_to_pocket(batch):
 
 def search_existing(source):
     urlist = []
-    lastest = ''
+    latest = ''
     url = base_url + 'get'
     params = {
         'consumer_key': CONSUMER_KEY,
