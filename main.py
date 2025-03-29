@@ -65,8 +65,8 @@ def save_new_items_to_pocket(feed_url):
         batch = []
         
         for entry in entries:
-            unix_timestamp = int(published_datetime.timestamp())
             published_datetime = parsedate_to_datetime(entry.published)
+            unix_timestamp = int(published_datetime.timestamp())
             time_interval = datetime.now() - timedelta(hours=1)
             # print(f"Checking if {entry.link} is a new link... ")
             if entry.link not in existurls and published_datetime > time_interval:
