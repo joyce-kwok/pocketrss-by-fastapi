@@ -123,8 +123,9 @@ def retrieve(state):
     params = {
         'consumer_key': CONSUMER_KEY,
         'access_token': ACCESS_TOKEN,
+        'state': state,
+        'favorite': 0,
         'sort': 'oldest',
-        'state': state
     }
     response = requests.post(url, json=params)
     print(f"Calling retrieve API for {state} action, response code is {response.status_code}")
@@ -135,7 +136,7 @@ def get_encoded_param(articles, action, delta):
     exprange = datetime.now() - delta
     for article in articles['list'].values():
         artime = datetime.fromtimestamp(int(article['time_added']))
-        if article['favorite'] == '0' and artime < exprange:
+        if artime < exprange:
             obj = {
                 'action': action,
                 'item_id': article['item_id'],
