@@ -115,7 +115,7 @@ def search_existing(source):
        articles = response.json()
        last_item_key = next(reversed(articles['list']))  # Returns "4192836625"
        last_item = articles["list"][last_item_key] # Returns the full last item dict
-       latest = last_item['time_added']
+       latest = datetime.fromtimestamp(int(last_item['time_added']))
        print(f"Last updated: {latest}")
        for article in articles['list'].values():
            urlist.append(article['given_url'])
