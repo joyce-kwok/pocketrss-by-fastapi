@@ -115,6 +115,7 @@ def search_existing(source):
        for article in articles['list'].values():
            urlist.append(article['given_url'])
     elif response.status.code == 403:
+        time.sleep(0.2)
         search_existing(source)
     return urlist
 
