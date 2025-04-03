@@ -49,7 +49,7 @@ RSS_FEEDS = {
     ],
     'washingtonpost': [
         'https://feeds.washingtonpost.com/rss/lifestyle',
-        'https://feeds.washingtonpost.com/rss/business/technology',
+        'https://feeds.washingtonpost.com/rss/business/technology'
     ],
 }
 
