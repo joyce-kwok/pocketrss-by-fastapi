@@ -196,13 +196,12 @@ async def housekeep(action: str):
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     global existurls, last_update
-    code = 0
     """Save specific feed source"""
     print(f"Data source: {source}")
     if source not in RSS_FEEDS:
         return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
     existurls, last_update, code = search_existing(source)
-    if code != 200:
+    if code == 200:
         with concurrent.futures.ThreadPoolExecutor() as executor:
           list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
         return f"Saved {source} feeds to pocket"
