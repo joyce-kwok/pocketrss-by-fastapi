@@ -196,6 +196,7 @@ async def housekeep(action: str):
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str):
     global existurls, last_update
+    code = 0
     """Save specific feed source"""
     print(f"Data source: {source}")
     if source not in RSS_FEEDS:
