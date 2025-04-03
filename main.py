@@ -45,9 +45,12 @@ RSS_FEEDS = {
     'nytimes': [
         'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
         'https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
         'https://rss.nytimes.com/services/xml/rss/nyt/tmagazine.xml'
-    ]
+    ],
+    'washingtonpost': [
+        'https://feeds.washingtonpost.com/rss/lifestyle',
+        'https://feeds.washingtonpost.com/rss/business/technology',
+    ],
 }
 
 def save_new_items_to_pocket(feed_url):
