@@ -41,6 +41,11 @@ RSS_FEEDS = {
     ],
     'telegraph': [
         'https://www.telegraph.co.uk/rss.xml'
+    ],
+    'nytimes': [
+        'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml'
     ]
 }
 
