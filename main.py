@@ -22,25 +22,25 @@ last_update: datetime = datetime.min.replace(tzinfo=timezone.utc)
 
 # Organized RSS feeds by source
 RSS_FEEDS = {
+    'bbc': [
+        'https://feeds.bbci.co.uk/news/world/rss.xml',
+        'https://feeds.bbci.co.uk/news/technology/rss.xml',
+        'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'
+    ],
     'rthk': [
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml'
     ],
     'scmp': [
-        'https://www.scmp.com/rss/36/feed',
-        'https://www.scmp.com/rss/91/feed'
+        'https://www.scmp.com/rss/2/feed',
+        'https://www.scmp.com/rss/318255/feed'
     ],
     'mingpao': [
         'https://news.mingpao.com/rss/ins/s00005.xml',
         'https://news.mingpao.com/rss/ins/s00024.xml'
     ],
-    'all': [
-        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
-        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml',
-        'https://www.scmp.com/rss/36/feed',
-        'https://www.scmp.com/rss/91/feed',
-        'https://news.mingpao.com/rss/ins/s00005.xml',
-        'https://news.mingpao.com/rss/ins/s00024.xml'
+    'telegraph': [
+        'https://www.telegraph.co.uk/rss.xml'
     ]
 }
 
