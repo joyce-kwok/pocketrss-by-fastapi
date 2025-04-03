@@ -120,13 +120,15 @@ def search_existing(source):
     if response.status_code == 200:
        articles = response.json()
        article_list = articles['list']
-         if len(article_list) > 0:
-             last_item_key = next(reversed(article_list))  # Returns "4192836625"
-             last_item = article_list[last_item_key] # Returns the full last item dict
-             latest = datetime.fromtimestamp(int(last_item['time_added']), tz=timezone.utc)
-             print(f"Last updated: {latest}")
-             for article in article_list.values():
-                 urlist.append(article['given_url'])
+       if len(article_list) > 0:
+          last_item_key = next(reversed(article_list))  # Returns "4192836625"
+          last_item = article_list[last_item_key] # Returns the full last item dict
+          latest = datetime.fromtimestamp(int(last_item['time_added']), tz=timezone.utc)
+          print(f"Last updated: {latest}")
+          for article in article_list.values():
+              urlist.append(article['given_url'])
+       else:
+          print("No existing articles for this news source") 
     else:
         urlist.append('error')
     return urlist, latest
