@@ -1,4 +1,5 @@
 from typing import Optional
+import secrets
 import os
 import concurrent.futures
 import feedparser
@@ -8,9 +9,9 @@ import json
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import PlainTextResponse
-from fastapi import FastAPI
 
 app = FastAPI()
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
@@ -200,31 +201,55 @@ def recall(state, action, freq):
     print(length)
     if length > 0:
         modify(param)
-        recall(state, action, freq)   
+        recall(state, action, freq)  
+
+def authenticate(
+    credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+):
+    current_username_bytes = credentials.username.encode("utf8")
+    correct_username_bytes = os.getenv('username').encode("utf8")
+    is_correct_username = secrets.compare_digest(
+        current_username_bytes, correct_username_bytes
+    )
+    current_password_bytes = credentials.password.encode("utf8")
+    correct_password_bytes = os.getenv('password').encode("utf8")
+    is_correct_password = secrets.compare_digest(
+        current_password_bytes, correct_password_bytes
+    )
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return is_correct_username and is_correct_password
+
 
 @app.get("/")
 async def root():
     return {"message": "kept awake"}
 
 @app.get("/housekeep/{action}", response_class=PlainTextResponse)
-async def housekeep(action: str):
-    if action == 'archive': 
-       recall('unread', 'archive', timedelta(hours=12))
-    if action == 'delete':
-       recall('archive', 'delete', timedelta(days=15))
-    return "housekeeping is done"
+async def housekeep(action: str,Verifcation = Depends(authenticate)):
+    if Verification: 
+       if action == 'archive': 
+          recall('unread', 'archive', timedelta(hours=12))
+       if action == 'delete':
+          recall('archive', 'delete', timedelta(days=15))
+       return "housekeeping is done"
 
 @app.get("/save/{source}", response_class=PlainTextResponse)
-async def save_source(source: str):
+async def save_source(source: str,Verifcation = Depends(authenticate)):
     global existurls, last_update
     """Save specific feed source"""
     print(f"Data source: {source}")
-    if source not in RSS_FEEDS:
-        return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
-    existurls, last_update, code = search_existing(source)
-    if code == 200:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-          list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
-        return f"Saved {source} feeds to pocket"
-    else:
-        return f"Cannot retrieve saved {source} feeds at the moment. Will not update news in this run."
+    if Verification: 
+       if source not in RSS_FEEDS:
+          return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
+       existurls, last_update, code = search_existing(source)
+       if code == 200:
+          with concurrent.futures.ThreadPoolExecutor() as executor:
+               list(executor.map(save_new_items_to_pocket, RSS_FEEDS[source]))
+          return f"Saved {source} feeds to pocket"
+       else:
+          return f"Cannot retrieve saved {source} feeds at the moment. Will not update news in this run."
