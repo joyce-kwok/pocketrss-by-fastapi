@@ -60,6 +60,11 @@ RSS_FEEDS = {
     'ltn':[
         'https://news.ltn.com.tw/rss/world.xml'
     ],
+    'dowjones':[
+        'https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness',
+        'https://feeds.content.dowjones.io/public/rss/RSSMarketsMain',
+        'https://feeds.content.dowjones.io/public/rss/RSSWSJD'
+    ]
 }
 
 def save_new_items_to_pocket(feed_url):
