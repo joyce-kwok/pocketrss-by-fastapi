@@ -27,6 +27,13 @@ RSS_FEEDS = {
         'https://feeds.bbci.co.uk/news/technology/rss.xml',
         'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'
     ],
+    'cnn':[
+        'http://rss.cnn.com/rss/money_pf.rss',
+        'http://rss.cnn.com/rss/money_technology.rss',
+        'http://rss.cnn.com/rss/money_news_economy.rss',
+        'http://rss.cnn.com/rss/money_news_international.rss',
+        'http://rss.cnn.com/rss/money_markets.rss'
+    ]
     'rthk': [
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml'
