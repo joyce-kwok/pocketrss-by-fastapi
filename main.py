@@ -56,6 +56,11 @@ RSS_FEEDS = {
         'https://feeds.washingtonpost.com/rss/lifestyle',
         'https://feeds.washingtonpost.com/rss/business/technology'
     ],
+    'theguardian': [
+        'https://www.theguardian.com/world/rss',
+        'https://www.theguardian.com/uk/technology/rss',
+        'https://www.theguardian.com/crosswords/rss'
+    ],
     'hket':[
         'https://www.hket.com/rss/hongkong'
     ],
