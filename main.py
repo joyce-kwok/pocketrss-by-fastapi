@@ -33,7 +33,7 @@ RSS_FEEDS = {
         'http://rss.cnn.com/rss/money_news_economy.rss',
         'http://rss.cnn.com/rss/money_news_international.rss',
         'http://rss.cnn.com/rss/money_markets.rss'
-    ]
+    ],
     'rthk': [
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
         'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml'
