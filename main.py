@@ -56,7 +56,6 @@ RSS_FEEDS = {
     ],
     'newtalk':[
         'https://newtalk.tw/rss/category/8',
-        'https://newtalk.tw/rss/category/103',
     ],
     'ltn':[
         'https://news.ltn.com.tw/rss/world.xml'
