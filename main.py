@@ -55,8 +55,12 @@ RSS_FEEDS = {
         'https://www.hket.com/rss/hongkong'
     ],
     newtalk:[
-        'https://newtalk.tw/rss/category/103'
-    ]
+        'https://newtalk.tw/rss/category/8',
+        'https://newtalk.tw/rss/category/103',
+    ],
+    ltn:[
+        'https://news.ltn.com.tw/rss/world.xml'
+    ],
 }
 
 def save_new_items_to_pocket(feed_url):
