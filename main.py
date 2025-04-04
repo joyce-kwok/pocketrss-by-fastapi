@@ -23,9 +23,7 @@ last_update: datetime = datetime.min.replace(tzinfo=timezone.utc)
 # Organized RSS feeds by source
 RSS_FEEDS = {
     'bbc': [
-        'https://feeds.bbci.co.uk/news/world/rss.xml',
-        'https://feeds.bbci.co.uk/news/technology/rss.xml',
-        'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'
+        'https://feeds.bbci.co.uk/zhongwen/trad/rss.xml',
     ],
     'cnn': [
         'http://rss.cnn.com/rss/money_pf.rss',
