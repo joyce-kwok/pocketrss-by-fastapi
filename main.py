@@ -51,14 +51,14 @@ RSS_FEEDS = {
         'https://feeds.washingtonpost.com/rss/lifestyle',
         'https://feeds.washingtonpost.com/rss/business/technology'
     ],
-    hket:[
+    'hket':[
         'https://www.hket.com/rss/hongkong'
     ],
-    newtalk:[
+    'newtalk':[
         'https://newtalk.tw/rss/category/8',
         'https://newtalk.tw/rss/category/103',
     ],
-    ltn:[
+    'ltn':[
         'https://news.ltn.com.tw/rss/world.xml'
     ],
 }
