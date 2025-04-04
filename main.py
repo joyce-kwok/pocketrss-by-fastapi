@@ -234,20 +234,22 @@ async def root():
     return {"message": "kept awake"}
 
 @app.get("/housekeep/{action}", response_class=PlainTextResponse)
-async def housekeep(action: str,Verifcation = Depends(authenticate)):
-    if Verification: 
-       if action == 'archive': 
-          recall('unread', 'archive', timedelta(hours=12))
-       if action == 'delete':
-          recall('archive', 'delete', timedelta(days=15))
-       return "housekeeping is done"
+async def housekeep(action: str, verification: bool = Depends(authenticate)):
+    if verification: 
+        if action == 'archive': 
+            recall('unread', 'archive', timedelta(hours=12))
+        elif action == 'delete':
+            recall('archive', 'delete', timedelta(days=15))
+        return "housekeeping is done"
+    else:
+        return "Unauthorized"
 
 @app.get("/save/{source}", response_class=PlainTextResponse)
-async def save_source(source: str,Verifcation = Depends(authenticate)):
+async def save_source(source: str, verification: bool = Depends(authenticate)):
     global existurls, last_update
     """Save specific feed source"""
     print(f"Data source: {source}")
-    if Verification: 
+    if verification: 
        if source not in RSS_FEEDS:
           return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
        existurls, last_update, code = search_existing(source)
