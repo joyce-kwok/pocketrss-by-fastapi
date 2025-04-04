@@ -51,6 +51,12 @@ RSS_FEEDS = {
         'https://feeds.washingtonpost.com/rss/lifestyle',
         'https://feeds.washingtonpost.com/rss/business/technology'
     ],
+    hket:[
+        'https://www.hket.com/rss/hongkong'
+    ],
+    newtalk:[
+        'https://newtalk.tw/rss/category/103'
+    ]
 }
 
 def save_new_items_to_pocket(feed_url):
