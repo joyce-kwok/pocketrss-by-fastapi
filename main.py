@@ -14,8 +14,12 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import PlainTextResponse
 
 app = FastAPI()
+security = HTTPBasic()
+
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+username = os.getenv('username')
+password = os.getenv('password')
 base_url = 'https://getpocket.com/v3/'
 batch_size = 8
 existurls = []
@@ -207,12 +211,12 @@ def authenticate(
     credentials: Annotated[HTTPBasicCredentials, Depends(security)],
 ):
     current_username_bytes = credentials.username.encode("utf8")
-    correct_username_bytes = os.getenv('username').encode("utf8")
+    correct_username_bytes = username.encode("utf8")
     is_correct_username = secrets.compare_digest(
         current_username_bytes, correct_username_bytes
     )
     current_password_bytes = credentials.password.encode("utf8")
-    correct_password_bytes = os.getenv('password').encode("utf8")
+    correct_password_bytes = password.encode("utf8")
     is_correct_password = secrets.compare_digest(
         current_password_bytes, correct_password_bytes
     )
