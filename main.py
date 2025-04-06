@@ -23,57 +23,6 @@ batch_size = 8
 existurls = []
 last_update: datetime = datetime.min.replace(tzinfo=timezone.utc)
 
-# Organized RSS feeds by source
-RSS_FEEDS = {
-    'bbc': [
-        'https://feeds.bbci.co.uk/zhongwen/trad/rss.xml',
-    ],
-    'rthk': [
-        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_cfinance.xml',
-        'https://rthk9.rthk.hk/rthk/news/rss/c_expressnews_clocal.xml'
-    ],
-    'scmp': [
-        'https://www.scmp.com/rss/2/feed',
-        'https://www.scmp.com/rss/318255/feed'
-    ],
-    'mingpao': [
-        'https://news.mingpao.com/rss/ins/s00005.xml',
-        'https://news.mingpao.com/rss/ins/s00024.xml'
-    ],
-    'telegraph': [
-        'https://www.telegraph.co.uk/rss.xml'
-    ],
-    'nytimes': [
-        'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/tmagazine.xml'
-    ],
-    'washingtonpost': [
-        'https://feeds.washingtonpost.com/rss/lifestyle',
-        'https://feeds.washingtonpost.com/rss/business/technology'
-    ],
-    'theguardian': [
-        'https://www.theguardian.com/world/rss',
-        'https://www.theguardian.com/uk/technology/rss',
-        'https://www.theguardian.com/crosswords/rss'
-    ],
-    'hket':[
-        'https://www.hket.com/rss/hongkong',
-        'https://www.hket.com/rss/finance'
-    ],
-    'newtalk':[
-        'https://newtalk.tw/rss/category/8',
-    ],
-    'ltn':[
-        'https://news.ltn.com.tw/rss/world.xml'
-    ],
-    'dowjones':[
-        'https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness',
-        'https://feeds.content.dowjones.io/public/rss/RSSMarketsMain',
-        'https://feeds.content.dowjones.io/public/rss/RSSWSJD'
-    ]
-}
-
 class HousekeepRequest(BaseModel):
     action: str
     hours: int = Field(default=None)
@@ -265,6 +214,10 @@ async def save_source(source: str, verification: bool = Depends(authenticate)):
     """Save specific feed source"""
     print(f"Data source: {source}")
     if verification: 
+       # Load RSS_FEEDS from JSON config
+       with open('config.json') as config_file:
+            config = json.load(config_file)
+            RSS_FEEDS = config['RSS_FEEDS']
        if source not in RSS_FEEDS:
           return f"Invalid source. Available sources: {', '.join(RSS_FEEDS.keys())}"
        existurls, last_update, code = search_existing(source)
