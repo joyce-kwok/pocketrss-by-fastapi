@@ -9,7 +9,7 @@ from typing import Optional, Annotated
 from pydantic import BaseModel, Field
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import PlainTextResponse, RedirectResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse, ORJSONResponse
 
 app = FastAPI()
 security = HTTPBasic()
@@ -229,7 +229,25 @@ async def save_source(source: str, verification: bool = Depends(authenticate)):
           return f"Cannot retrieve saved {source} feeds at the moment. Will not update news in this run."
 
 
-@app.get("/fastapi", response_class=RedirectResponse)
+@app.get("/adduser", response_class=RedirectResponse)
 async def redirect_fastapi():
-    return "https://fastapi.tiangolo.com"
+    url = base_url + 'oauth/request'
+    payload = {
+        'consumer_key': CONSUMER_KEY,
+        'redirect_uri': "https://pocketapi-to-fastapi.onrender.com"
+    }
+    response = requests.post(url, json=payload)
+    code = response.text.split("=")[-1]
+    print(f"retrieved code = {code}")
+    return f"https://getpocket.com/auth/authorize?request_token={code}&redirect_uri=https://pocketapi-to-fastapi.onrender.com/get-token/{code}"
+
+@app.get("/get-token/{token}", response_class=ORJSONResponse)
+async def return_token(token: str):
+    url = base_url + 'oauth/authorize'
+    payload = {
+        'consumer_key': CONSUMER_KEY,
+        'code':token
+    }
+    response = requests.post(url, json=payload)
+    return response.json()
 
