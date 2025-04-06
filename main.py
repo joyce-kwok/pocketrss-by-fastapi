@@ -32,6 +32,9 @@ class HousekeepRequest(BaseModel):
     weeks: int = Field(default=None)
     minutes: int = Field(default=None)
 
+def run_flask():
+    flaskapp.run(host="0.0.0.0", port=5000)  # Use a different port for Flask
+
 @flaskapp.route('/adduser')
 def flask_endpoint():
     return "Hello from Flask!"
