@@ -9,7 +9,7 @@ from typing import Optional, Annotated
 from pydantic import BaseModel, Field
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 
 app = FastAPI()
 security = HTTPBasic()
@@ -227,3 +227,9 @@ async def save_source(source: str, verification: bool = Depends(authenticate)):
           return f"Saved {source} feeds to pocket"
        else:
           return f"Cannot retrieve saved {source} feeds at the moment. Will not update news in this run."
+
+
+@app.get("/fastapi", response_class=RedirectResponse)
+async def redirect_fastapi():
+    return "https://fastapi.tiangolo.com"
+
