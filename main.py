@@ -1,14 +1,12 @@
-from typing import Optional, Annotated
-import secrets
-import os
+
+import os, time, secrets
 import concurrent.futures
 import feedparser
-import time
-import requests
-import json
+import requests, json
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
+from typing import Optional, Annotated
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import PlainTextResponse
@@ -75,6 +73,13 @@ RSS_FEEDS = {
         'https://feeds.content.dowjones.io/public/rss/RSSWSJD'
     ]
 }
+
+class HousekeepRequest(BaseModel):
+    action: str
+    hours: int = Field(default=None)
+    days: int = Field(default=None)
+    weeks: int = Field(default=None)
+    minutes: int = Field(default=None)
 
 def save_new_items_to_pocket(feed_url):
     """Save new items from an RSS feed to Pocket in batches.
@@ -233,13 +238,23 @@ def authenticate(
 async def root():
     return {"message": "kept awake"}
 
-@app.get("/housekeep/{action}", response_class=PlainTextResponse)
-async def housekeep(action: str, verification: bool = Depends(authenticate)):
-    if verification: 
-        if action == 'archive': 
-            recall('unread', 'archive', timedelta(hours=12))
-        elif action == 'delete':
-            recall('archive', 'delete', timedelta(days=15))
+@app.post("/housekeep", response_class=PlainTextResponse)
+async def housekeep(request: HousekeepRequest, verification: bool = Depends(authenticate)):
+    if verification:
+        time_delta = timedelta(
+            days=request.days if request.days else 0,
+            hours=request.hours if request.hours else 0,
+            minutes=request.minutes if request.minutes else 0,
+            weeks=request.weeks if request.weeks else 0
+        )
+
+        if request.action == 'archive':
+            recall('unread', 'archive', time_delta)
+        elif request.action == 'delete':
+            recall('archive', 'delete', time_delta)
+        else:
+            return "Invalid request parameters"
+
         return "housekeeping is done"
     else:
         return "Unauthorized"
