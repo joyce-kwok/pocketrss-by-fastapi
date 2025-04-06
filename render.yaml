@@ -1,17 +1,9 @@
 services:
+  # A Docker web service
   - type: web
-    name: flask-service
+    name: pocketrss-app
     runtime: python
+    plan: free
+    autoDeploy: false
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:10000
-    env: python
-    envVars:
-      - key: FLASK_ENV
-        value: production
-
-  - type: web
-    name: fastapi-service
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
-    env: python
+    startCommand: gunicorn -w 2 -k uvicorn.workers.UvicornWorker main:fastAPIapp --bind 0.0.0.0:$PORT

@@ -1,5 +1,7 @@
 fastapi[all]
 uvicorn
+flask
+gunicorn
 pydantic
 feedparser
 requests

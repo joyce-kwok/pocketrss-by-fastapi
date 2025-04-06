@@ -6,11 +6,17 @@ import urllib.parse
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from typing import Optional, Annotated
+<<<<<<< HEAD:fastapi-app/main.py
+=======
+from pydantic import BaseModel, Field
+from flask import Flask
+>>>>>>> parent of 00d3a36 (Separate frontend and backend):main.py
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import PlainTextResponse
 
-app = FastAPI()
+fastAPIapp = FastAPI()
+flaskapp = Flask(__name__)
 security = HTTPBasic()
 
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
@@ -28,6 +34,13 @@ class HousekeepRequest(BaseModel):
     days: int = Field(default=None)
     weeks: int = Field(default=None)
     minutes: int = Field(default=None)
+
+def run_flask():
+    flaskapp.run(host="0.0.0.0", port=5000)  # Use a different port for Flask
+
+@flaskapp.route('/adduser')
+def flask_endpoint():
+    return "Hello from Flask!"
 
 def save_new_items_to_pocket(feed_url):
     """Save new items from an RSS feed to Pocket in batches.
@@ -182,11 +195,11 @@ def authenticate(
     return is_correct_username and is_correct_password
 
 
-@app.get("/")
+@fastAPIapp.get("/")
 async def root():
     return {"message": "kept awake"}
 
-@app.post("/housekeep", response_class=PlainTextResponse)
+@fastAPIapp.post("/housekeep", response_class=PlainTextResponse)
 async def housekeep(request: HousekeepRequest, verification: bool = Depends(authenticate)):
     if verification:
         time_delta = timedelta(
@@ -207,7 +220,7 @@ async def housekeep(request: HousekeepRequest, verification: bool = Depends(auth
     else:
         return "Unauthorized"
 
-@app.get("/save/{source}", response_class=PlainTextResponse)
+@fastAPIapp.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str, verification: bool = Depends(authenticate)):
     global existurls, last_update
     """Save specific feed source"""
