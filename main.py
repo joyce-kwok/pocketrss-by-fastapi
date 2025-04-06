@@ -241,12 +241,12 @@ async def redirect_fastapi():
     print(f"retrieved code = {code}")
     return f"https://getpocket.com/auth/authorize?request_token={code}&redirect_uri=https://pocketapi-to-fastapi.onrender.com/get-token/{code}"
 
-@app.get("/get-token/{token}", response_class=ORJSONResponse)
+@app.get("/get-token/{token}", response_class=PlainTextResponse)
 async def return_token(token: str):
     url = base_url + 'oauth/authorize'
     payload = {
         'consumer_key': CONSUMER_KEY,
-        'code':token
+        'code': token
     }
     response = requests.post(url, json=payload)
     return response.json()
