@@ -125,7 +125,7 @@ def retrieve(state):
     }
     response = requests.post(url, json=params)
     print(f"Calling retrieve API for {state} action, response code is {response.status_code}")
-    return response.json()
+    return response.json(), response.status_code
 
 def get_encoded_param(articles, action, delta):
     temp = []
@@ -154,13 +154,18 @@ def modify(encodedparam):
     print(f"Response body: {response.text}")
 
 def recall(state, action, freq):
-    articles = retrieve(state)
-    param, length = get_encoded_param(articles, action, freq)
-    print(param)
-    print(length)
-    if length > 0:
-        modify(param)
-        recall(state, action, freq)  
+    articles, status = retrieve(state)
+    if status == 200:
+       param, length = get_encoded_param(articles, action, freq)
+       # print(param)
+       print(f"Amount of items to housekeep: {length}")
+       if length > 0:
+          modify(param)
+          recall(state, action, freq)
+       else: 
+          return "housekeeping is done"
+    else:
+        return "Will stop the housekeeping since the Pocket API has reached the limit."  
 
 def authenticate(
     credentials: Annotated[HTTPBasicCredentials, Depends(security)],
@@ -197,17 +202,17 @@ async def housekeep(request: HousekeepRequest, verification: bool = Depends(auth
             minutes=request.minutes if request.minutes else 0,
             weeks=request.weeks if request.weeks else 0
         )
-
+        res = ''
         if request.action == 'archive':
-            recall('unread', 'archive', time_delta)
+            res = recall('unread', 'archive', time_delta)
         elif request.action == 'delete':
-            recall('archive', 'delete', time_delta)
+            res = recall('archive', 'delete', time_delta)
         else:
             return "Invalid request parameters"
 
-        return "housekeeping is done"
+        return res
     else:
-        return "Unauthorized"
+        return "Unauthorized due to incorrect credentials"
 
 @app.get("/save/{source}", response_class=PlainTextResponse)
 async def save_source(source: str, verification: bool = Depends(authenticate)):
@@ -241,6 +246,7 @@ async def redirect_fastapi():
     code = response.text.split("=")[-1]
     print(f"retrieved code = {code}")
     return f"https://getpocket.com/auth/authorize?request_token={code}&redirect_uri=https://pocketapi-to-fastapi.onrender.com/get-token/{code}"
+
 
 @app.get("/get-token/{token}", response_class=PlainTextResponse)
 async def return_token(token: str):
