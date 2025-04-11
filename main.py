@@ -165,7 +165,7 @@ def recall(state, action, freq):
        else: 
           return "housekeeping is done"
     else:
-        return "Will stop the housekeeping since the Pocket API has reached the limit."  
+        return "Housekeeping is interrupted because the Pocket API has reached its usage limit for the hour."  
 
 def authenticate(
     credentials: Annotated[HTTPBasicCredentials, Depends(security)],
