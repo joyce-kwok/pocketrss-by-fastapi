@@ -151,6 +151,7 @@ def modify(encodedparam):
     }
     response = requests.post(url, params=payload)
     print(f"Calling modify API to update items, response code is {response.status_code}")
+    print(f"Response body: {response.text}")
 
 def recall(state, action, freq):
     articles = retrieve(state)
