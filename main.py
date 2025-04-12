@@ -193,6 +193,10 @@ def authenticate(
 async def root():
     return {"message": "kept awake"}
 
+@app.head("/healthcheck")
+async def head_item():
+    return {}
+
 @app.post("/housekeep", response_class=PlainTextResponse)
 async def housekeep(request: HousekeepRequest, verification: bool = Depends(authenticate)):
     if verification:
