@@ -129,7 +129,7 @@ async def retrieve(state):
        print(f"Calling retrieve API for {state} action, response code is {response.status_code}")
        return response.json(), response.status_code
 
-def get_encoded_param(articles, action, delta):
+async def get_encoded_param(articles, action, delta):
     temp = []
     exprange = datetime.now() - delta
     for article in articles['list'].values():
@@ -158,7 +158,7 @@ def modify(encodedparam):
 async def recall(state, action, freq):
     articles, status = await retrieve(state)
     if status == 200:
-       param, length = get_encoded_param(articles, action, freq)
+       param, length = await get_encoded_param(articles, action, freq)
        # print(param)
        print(f"Amount of items to housekeep: {length}")
        if length > 0:
