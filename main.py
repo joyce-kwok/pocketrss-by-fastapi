@@ -161,7 +161,7 @@ def recall(state, action, freq):
        print(f"Amount of items to housekeep: {length}")
        if length > 0:
           modify(param)
-          recall(state, action, freq)
+          return recall(state, action, freq)
        else: 
           return "housekeeping is done"
     else:
