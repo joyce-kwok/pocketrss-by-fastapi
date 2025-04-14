@@ -3,4 +3,5 @@ uvicorn
 pydantic
 feedparser
 requests
+httpx
 python-dateutil

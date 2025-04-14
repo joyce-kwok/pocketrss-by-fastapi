@@ -3,6 +3,7 @@ import concurrent.futures
 import feedparser
 import requests, json
 import urllib.parse
+from httpx import AsyncClient
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from typing import Optional, Annotated
@@ -114,7 +115,7 @@ def search_existing(source):
         urlist.append('error')
     return urlist, latest, response.status_code
 
-def retrieve(state):
+async def retrieve(state):
     url = base_url + 'get'
     params = {
         'consumer_key': CONSUMER_KEY,
@@ -123,9 +124,10 @@ def retrieve(state):
         'favorite': 0,
         'sort': 'oldest',
     }
-    response = requests.post(url, json=params)
-    print(f"Calling retrieve API for {state} action, response code is {response.status_code}")
-    return response.json(), response.status_code
+    async with AsyncClient() as client:
+       response = await client.post(url, json=params)
+       print(f"Calling retrieve API for {state} action, response code is {response.status_code}")
+       return response.json(), response.status_code
 
 def get_encoded_param(articles, action, delta):
     temp = []
@@ -153,15 +155,15 @@ def modify(encodedparam):
     print(f"Calling modify API to update items, response code is {response.status_code}")
     print(f"Response body: {response.text}")
 
-def recall(state, action, freq):
-    articles, status = retrieve(state)
+async def recall(state, action, freq):
+    articles, status = await retrieve(state)
     if status == 200:
        param, length = get_encoded_param(articles, action, freq)
        # print(param)
        print(f"Amount of items to housekeep: {length}")
        if length > 0:
           modify(param)
-          return recall(state, action, freq)
+          return await recall(state, action, freq)
        else: 
           return "housekeeping is done"
     else:
@@ -208,9 +210,9 @@ async def housekeep(request: HousekeepRequest, verification: bool = Depends(auth
         )
         res = ''
         if request.action == 'archive':
-            res = recall('unread', 'archive', time_delta)
+            res = await recall('unread', 'archive', time_delta)
         elif request.action == 'delete':
-            res = recall('archive', 'delete', time_delta)
+            res = await recall('archive', 'delete', time_delta)
         else:
             return "Invalid request parameters"
 
