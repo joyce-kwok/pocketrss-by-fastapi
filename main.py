@@ -132,8 +132,11 @@ async def retrieve(state):
 async def get_encoded_param(articles, action, delta):
     temp = []
     exprange = datetime.now() - delta
+    print(f"Will housekeep items since {exprange}")
     for article in articles['list'].values():
         artime = datetime.fromtimestamp(int(article['time_added']))
+        print(f"Article datetime before conversion: {int(article['time_added'])}")
+        print(f"Converted article datetime: {artime}")
         if artime < exprange:
             obj = {
                 'action': action,
