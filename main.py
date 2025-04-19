@@ -121,7 +121,6 @@ async def retrieve(state):
         'consumer_key': CONSUMER_KEY,
         'access_token': ACCESS_TOKEN,
         'state': state,
-        'favorite': 0,
         'sort': 'oldest',
     }
     async with AsyncClient() as client:
@@ -137,7 +136,7 @@ async def get_encoded_param(articles, action, delta):
         artime = datetime.fromtimestamp(int(article['time_added']))
         print(f"Article datetime before conversion: {int(article['time_added'])}")
         print(f"Converted article datetime: {artime}")
-        if artime < exprange:
+        if artime < exprange and article['favorite'] == '0':
             obj = {
                 'action': action,
                 'item_id': article['item_id'],
