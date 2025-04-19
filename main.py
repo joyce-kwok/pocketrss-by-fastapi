@@ -157,6 +157,7 @@ def modify(encodedparam):
 
 async def recall(state, action, freq):
     articles, status = await retrieve(state)
+    print(f"Retrieved {state} articles response: {articles}")
     if status == 200:
        param, length = await get_encoded_param(articles, action, freq)
        # print(param)
